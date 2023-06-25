@@ -11,18 +11,30 @@ export class App extends Component {
     filter: '',
   };
   componentDidMount() {
-    const contacts = localStorage.getItem('contacts');
-    return contacts && this.setState({ contacts: JSON.parse(contacts) });
+    this.loadContactsFromLocalStorage();
   }
+
   componentDidUpdate(prevState) {
     if (prevState.contacts !== this.state.contacts) {
-      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+      this.saveContactsToLocalStorage();
     }
   }
 
-  DataHandleSubmit = data => this.AddContactMarckup(data);
+  loadContactsFromLocalStorage() {
+    const contacts = localStorage.getItem('contacts');
+    if (contacts) {
+      this.setState({ contacts: JSON.parse(contacts) });
+    }
+  }
 
-  AddContactMarckup = ({ name, number }) => {
+  saveContactsToLocalStorage() {
+    const { contacts } = this.state;
+    localStorage.setItem('contacts', JSON.stringify(contacts));
+  }
+
+  dataHandleSubmit = data => this.addContactMarckup(data);
+
+  addContactMarckup = ({ name, number }) => {
     const newContact = {
       id: nanoid(),
       name,
@@ -58,7 +70,7 @@ export class App extends Component {
     return (
       <Container>
         <h1>Phonebook</h1>
-        <AddContact onSubmit={this.DataHandleSubmit} />
+        <AddContact onSubmit={this.dataHandleSubmit} />
         <h2>Contacts</h2>
         <Filter value={this.state.filter} onFilter={this.onFilterChange} />
         <ContactsList
